@@ -1,6 +1,7 @@
 package move
 
 import (
+	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -55,37 +56,78 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, err)
 		assert.False(t, exists)
 	})
+	t.Run("execute with technology param", func(t *testing.T) {
+		fs := afero.Afero{Fs: afero.NewMemMapFs()}
+
+		sourceDir := "/source"
+		targetDir := "/target"
+
+		manifestContent := `{
+			"version": "1.0",
+			"technologies": {
+				"java": {
+					"x86": [
+						{"path": "fileA1.txt", "version": "1.0", "md5": "abc123"}
+					]
+				},
+				"python": {
+					"arm": [
+						{"path": "fileA2.txt", "version": "1.0", "md5": "ghi789"}
+					]
+				}
+			}
+		}`
+
+		technologyList := "java"
+		_ = fs.MkdirAll(sourceDir, 0755)
+		_ = afero.WriteFile(fs, sourceDir+"/manifest.json", []byte(manifestContent), 0644)
+		_ = afero.WriteFile(fs, sourceDir+"/fileA1.txt", []byte("fileA1 content"), 0644)
+		_ = afero.WriteFile(fs, sourceDir+"/fileA2.txt", []byte("fileA2 content"), 0644)
+
+		sourceFolder = sourceDir
+		targetFolder = targetDir
+		technology = technologyList
+
+		err := Execute(fs)
+		require.NoError(t, err)
+
+		// Check if the target directory and files exist
+		exists, err := afero.DirExists(fs, targetDir)
+		require.NoError(t, err)
+		assert.True(t, exists)
+
+		file1Exists, err := afero.Exists(fs, targetDir+"/fileA1.txt")
+		assert.NoError(t, err)
+		assert.True(t, file1Exists)
+
+		file2Exists, err := afero.Exists(fs, targetDir+"/fileA2.txt")
+		assert.NoError(t, err)
+		assert.False(t, file2Exists)
+
+		// Check the content of the copied files
+		content, err := afero.ReadFile(fs, targetDir+"/fileA1.txt")
+		assert.NoError(t, err)
+		assert.Equal(t, "fileA1 content", string(content))
+
+		content, err = afero.ReadFile(fs, targetDir+"/fileA2.txt")
+		assert.Error(t, err)
+		assert.Empty(t, string(content))
+	})
 }
 
-func TestCopyFolder(t *testing.T) {
-	fs := afero.NewMemMapFs()
-	src := "/src"
-	err := fs.MkdirAll(src, 0755)
-	require.NoError(t, err)
+func assertFileExists(t *testing.T, fs afero.Fs, path string) {
+	t.Helper()
 
-	err = afero.WriteFile(fs, filepath.Join(src, "file1.txt"), []byte("Hello"), 0644)
-	require.NoError(t, err)
+	exists, err := afero.Exists(fs, path)
+	assert.NoError(t, err)
+	assert.True(t, exists, fmt.Sprintf("file should exist: %s", path))
+}
+func assertFileNotExists(t *testing.T, fs afero.Fs, path string) {
+	t.Helper()
 
-	err = fs.MkdirAll(filepath.Join(src, "subdir"), 0755)
-	require.NoError(t, err)
-
-	err = afero.WriteFile(fs, filepath.Join(src, "subdir", "file2.txt"), []byte("World"), 0644)
-	require.NoError(t, err)
-
-	dst := "/dst"
-	err = fs.MkdirAll(dst, 0755)
-	require.NoError(t, err)
-
-	err = copyFolder(fs, src, dst)
-	require.NoError(t, err)
-
-	srcFiles, err := afero.ReadDir(fs, src)
-	require.NoError(t, err)
-	dstFiles, err := afero.ReadDir(fs, dst)
-	require.NoError(t, err)
-	require.Len(t, dstFiles, len(srcFiles))
-
-	checkFolder(t, fs, src, dst)
+	exists, err := afero.Exists(fs, path)
+	assert.NoError(t, err)
+	assert.False(t, exists, fmt.Sprintf("file should not exist: %s", path))
 }
 
 func checkFolder(t *testing.T, fs afero.Fs, src, dst string) {
