@@ -2,40 +2,30 @@ package container
 
 import (
 	"encoding/json"
+	"fmt"
 
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
+	"github.com/Dynatrace/dynatrace-bootstrapper/pkg/utils/structs"
+	"github.com/pkg/errors"
 )
 
 const (
-	flagKey = "attribute-container"
+	Flag = "attribute-container"
 )
-
-var (
-	attributes []string
-)
-
-func AddFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringArrayVar(&attributes, flagKey, []string{}, "(Optional) Container-specific attributes in JSON format.")
-}
-
-type ImageInfo struct {
-	Registry    string `json:"container_image.registry"`
-	Repository  string `json:"container_image.repository"`
-	Tag         string `json:"container_image.tags"`
-	ImageDigest string `json:"container_image.digest"`
-}
 
 type Attributes struct {
 	ImageInfo     `json:",inline"`
 	ContainerName string `json:"k8s.container.name"`
 }
 
-func ParseAttributes() ([]Attributes, error) {
+func (attr Attributes) ToMap() (map[string]string, error) {
+	return structs.ToMap(attr)
+}
+
+func ParseAttributes(rawAttributes []string) ([]Attributes, error) {
 	var attributeList []Attributes
 
-	for _, attr := range attributes {
-		parsedAttr, err := parseAttributes(attr)
+	for _, attr := range rawAttributes {
+		parsedAttr, err := parse(attr)
 		if err != nil {
 			return nil, err
 		}
@@ -46,9 +36,23 @@ func ParseAttributes() ([]Attributes, error) {
 	return attributeList, nil
 }
 
-func parseAttributes(rawAttribute string) (*Attributes, error) {
-	logrus.Infof("Starting to parse container attributes for: %s", rawAttribute)
+// ToArgs is a helper func to convert an []container.Attributes to a list of args that can be put into a Pod Template
+func ToArgs(attributes []Attributes) ([]string, error) {
+	var args []string
 
+	for _, attr := range attributes {
+		jsonAttr, err := json.Marshal(attr)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		args = append(args, fmt.Sprintf("--%s=%s", Flag, string(jsonAttr)))
+	}
+
+	return args, nil
+}
+
+func parse(rawAttribute string) (*Attributes, error) {
 	var result Attributes
 
 	err := json.Unmarshal([]byte(rawAttribute), &result)

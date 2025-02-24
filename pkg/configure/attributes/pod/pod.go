@@ -2,29 +2,25 @@ package pod
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
+	"github.com/Dynatrace/dynatrace-bootstrapper/pkg/utils/structs"
 )
 
 const (
-	flagKey = "attribute"
+	Flag = "attribute"
 )
-
-var (
-	attributes []string
-)
-
-func AddFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringArrayVar(&attributes, flagKey, []string{}, "(Optional) Pod-specific attributes in key=value format.")
-}
 
 type Attributes struct {
-	Raw map[string]string
-	PodInfo
-	WorkloadInfo
-	ClusterInfo
+	UserDefined  map[string]string `json:"-"`
+	PodInfo      `json:",inline"`
+	WorkloadInfo `json:",inline"`
+	ClusterInfo  `json:",inline"`
+}
+
+func (attr Attributes) ToMap() (map[string]string, error) {
+	return structs.ToMap(attr)
 }
 
 type PodInfo struct {
@@ -43,13 +39,7 @@ type ClusterInfo struct {
 	DTClusterEntity string `json:"dt.entity.kubernetes_cluster"`
 }
 
-func ParseAttributes() (*Attributes, error) {
-	return parseAttributes(attributes)
-}
-
-func parseAttributes(rawAttributes []string) (*Attributes, error) {
-	logrus.Infof("Starting to parse pod attributes for: %s", rawAttributes)
-
+func ParseAttributes(rawAttributes []string) (Attributes, error) {
 	rawMap := make(map[string]string)
 
 	for _, attr := range rawAttributes {
@@ -61,17 +51,63 @@ func parseAttributes(rawAttributes []string) (*Attributes, error) {
 
 	raw, err := json.Marshal(rawMap)
 	if err != nil {
-		return nil, err
+		return Attributes{}, err
 	}
 
 	var result Attributes
 
 	err = json.Unmarshal(raw, &result)
 	if err != nil {
+		return Attributes{}, err
+	}
+
+	err = filterOutUserDefined(rawMap, result)
+	if err != nil {
+		return Attributes{}, err
+	}
+
+	result.UserDefined = rawMap
+
+	return result, nil
+}
+
+func filterOutUserDefined(rawInput map[string]string, parsedInput Attributes) error {
+	parsedMap, err := parsedInput.ToMap()
+	if err != nil {
+		return err
+	}
+
+	for key := range parsedMap {
+		delete(rawInput, key)
+	}
+
+	return nil
+}
+
+// ToArgs is a helper func to convert an pod.Attributes to a list of args that can be put into a Pod Template
+func ToArgs(attributes Attributes) ([]string, error) {
+	var args []string
+
+	attrMap, err := attributes.ToMap()
+	if err != nil {
 		return nil, err
 	}
 
-	result.Raw = rawMap
+	for key, value := range attrMap {
+		if value == "" {
+			continue
+		}
 
-	return &result, nil
+		args = append(args, fmt.Sprintf("--%s=%s=%s", Flag, key, value))
+	}
+
+	for key, value := range attributes.UserDefined {
+		if value == "" {
+			continue
+		}
+
+		args = append(args, fmt.Sprintf("--%s=%s=%s", Flag, key, value))
+	}
+
+	return args, nil
 }
