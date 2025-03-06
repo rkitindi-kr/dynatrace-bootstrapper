@@ -23,4 +23,30 @@ func TestBootstrapper(t *testing.T) {
 
 		require.NoError(t, err)
 	})
+
+	t.Run("--suppress-error=true -> no error", func(t *testing.T) {
+		cmd := bootstrapper(afero.NewMemMapFs())
+		cmd.SetArgs([]string{"--source", "\\\\", "--target", "\\\\"})
+
+		err := cmd.Execute()
+
+		require.Error(t, err)
+
+		cmd = bootstrapper(afero.NewMemMapFs())
+		// Note: we can't skip/mask the validation of the required flags
+		cmd.SetArgs([]string{"--source", "\\\\", "--target", "\\\\", "--suppress-error"})
+
+		err = cmd.Execute()
+
+		require.NoError(t, err)
+
+
+		cmd = bootstrapper(afero.NewMemMapFs())
+		// Note: we can't skip/mask the validation of the required flags
+		cmd.SetArgs([]string{"--source", "\\\\", "--target", "\\\\", "--suppress-error", "true"})
+
+		err = cmd.Execute()
+
+		require.NoError(t, err)
+	})
 }
