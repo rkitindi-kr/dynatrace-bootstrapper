@@ -42,8 +42,9 @@ func main() {
 
 func bootstrapper(fs afero.Fs) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "dynatrace-bootstrapper",
-		RunE: run(fs),
+		Use:                "dynatrace-bootstrapper",
+		RunE:               run(fs),
+		FParseErrWhitelist: cobra.FParseErrWhitelist{UnknownFlags: true},
 	}
 
 	AddFlags(cmd)
@@ -70,6 +71,7 @@ func AddFlags(cmd *cobra.Command) {
 func run(fs afero.Fs) func(cmd *cobra.Command, _ []string) error {
 	return func(cmd *cobra.Command, _ []string) error {
 		setupLogger()
+
 		if isDebug {
 			log.Info("debug logs enabled")
 		}
