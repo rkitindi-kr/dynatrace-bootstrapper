@@ -9,6 +9,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
+	"golang.org/x/sys/unix"
 )
 
 type Manifest struct {
@@ -39,6 +40,9 @@ func CopyByTechnology(log logr.Logger, fs afero.Afero, from string, to string, t
 	if err != nil {
 		return err
 	}
+
+	oldUmask := unix.Umask(0000)
+	defer unix.Umask(oldUmask)
 
 	for _, sourceFilePath := range filteredPaths {
 		targetFilePath := filepath.Join(to, strings.Split(sourceFilePath, from)[1])
