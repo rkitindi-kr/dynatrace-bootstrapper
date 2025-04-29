@@ -2,6 +2,7 @@ package move
 
 import (
 	"fmt"
+	"io/fs"
 	"path/filepath"
 	"testing"
 
@@ -89,6 +90,68 @@ func TestCopyFolderWithTechnologyFiltering(t *testing.T) {
 	})
 }
 
+func TestCopyByList(t *testing.T) {
+	dirs := []string{
+		"./folder",
+		"./folder/sub",
+		"./folder/sub/child",
+	}
+	dirModes := []fs.FileMode{
+		0777,
+		0776,
+		0775,
+	}
+
+	filesNames := []string{
+		"f1.txt",
+		"runtime",
+		"log",
+	}
+	fileModes := []fs.FileMode{
+		0764,
+		0773,
+		0772,
+	}
+
+	fs := afero.Afero{Fs: afero.NewMemMapFs()}
+	// create an FS where there are multiple sub dirs and files, each with their own file modes
+	for i := range len(dirs) {
+		err := fs.Mkdir(dirs[i], dirModes[i])
+		require.NoError(t, err)
+		err = fs.WriteFile(filepath.Join(dirs[i], filesNames[i]), []byte(fmt.Sprintf("%d", i)), fileModes[i])
+		require.NoError(t, err)
+	}
+
+	// reverse the list, so the longest path is the first
+	fileList := []string{}
+	for i := len(dirs) - 1; i >= 0; i-- {
+		fileList = append(fileList, filepath.Join(dirs[i], filesNames[i]))
+	}
+
+	targetDir := "./target"
+
+	err := copyByList(testLog, fs, "./", targetDir, fileList)
+	require.NoError(t, err)
+
+	for i := range len(dirs) {
+		targetStat, err := fs.Stat(filepath.Join(targetDir, dirs[i]))
+		require.NoError(t, err)
+		assert.Equal(t, dirModes[i], targetStat.Mode().Perm(), targetStat.Name())
+
+		sourceStat, err := fs.Stat(dirs[i])
+		require.NoError(t, err)
+		assert.Equal(t, sourceStat.Mode(), targetStat.Mode(), targetStat.Name())
+
+		targetStat, err = fs.Stat(filepath.Join(targetDir, dirs[i], filesNames[i]))
+		require.NoError(t, err)
+		assert.Equal(t, fileModes[i], targetStat.Mode().Perm(), targetStat.Name())
+
+		sourceStat, err = fs.Stat(filepath.Join(dirs[i], filesNames[i]))
+		require.NoError(t, err)
+		assert.Equal(t, sourceStat.Mode(), targetStat.Mode(), targetStat.Name())
+	}
+}
+
 func TestFilterFilesByTechnology(t *testing.T) {
 	fs := afero.Afero{Fs: afero.NewMemMapFs()}
 
@@ -111,25 +174,22 @@ func TestFilterFilesByTechnology(t *testing.T) {
         }
     }`
 	_ = afero.WriteFile(fs, filepath.Join(sourceDir, "manifest.json"), []byte(manifestContent), 0644)
-	_ = afero.WriteFile(fs, filepath.Join(sourceDir, "fileA1.txt"), []byte("a1 content"), 0644)
-	_ = afero.WriteFile(fs, filepath.Join(sourceDir, "fileA2.txt"), []byte("a2 content"), 0644)
-	_ = afero.WriteFile(fs, filepath.Join(sourceDir, "fileB1.txt"), []byte("b1 content"), 0644)
 
 	t.Run("filter single technology", func(t *testing.T) {
 		paths, err := filterFilesByTechnology(testLog, fs, sourceDir, []string{"java"})
 		require.NoError(t, err)
 		assert.ElementsMatch(t, []string{
-			filepath.Join(sourceDir, "fileA1.txt"),
-			filepath.Join(sourceDir, "fileA2.txt"),
+			filepath.Join("fileA1.txt"),
+			filepath.Join("fileA2.txt"),
 		}, paths)
 	})
 	t.Run("filter multiple technologies", func(t *testing.T) {
 		paths, err := filterFilesByTechnology(testLog, fs, sourceDir, []string{"java", "python"})
 		require.NoError(t, err)
 		assert.ElementsMatch(t, []string{
-			filepath.Join(sourceDir, "fileA1.txt"),
-			filepath.Join(sourceDir, "fileA2.txt"),
-			filepath.Join(sourceDir, "fileB1.txt"),
+			filepath.Join("fileA1.txt"),
+			filepath.Join("fileA2.txt"),
+			filepath.Join("fileB1.txt"),
 		}, paths)
 	})
 	t.Run("not filter non-existing technology", func(t *testing.T) {
