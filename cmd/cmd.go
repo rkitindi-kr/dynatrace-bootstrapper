@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Dynatrace/dynatrace-bootstrapper/cmd/configure"
@@ -28,6 +29,8 @@ func New(fs afero.Fs) *cobra.Command {
 		Use:                Use,
 		RunE:               run(fs),
 		FParseErrWhitelist: cobra.FParseErrWhitelist{UnknownFlags: true},
+		Version:            version.Version,
+		Short:              fmt.Sprintf("%s version %s", version.AppName, version.Version),
 	}
 
 	AddFlags(cmd)
