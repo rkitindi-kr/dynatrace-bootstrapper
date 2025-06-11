@@ -126,7 +126,9 @@ func filterFilesByTechnology(log logr.Logger, fs afero.Afero, source string, tec
 	var paths []string
 
 	for _, tech := range technologies {
+		tech := strings.TrimSpace(tech)
 		techData, exists := manifest.Technologies[tech]
+
 		if !exists {
 			log.Info("technology not found", "tech", tech)
 			continue

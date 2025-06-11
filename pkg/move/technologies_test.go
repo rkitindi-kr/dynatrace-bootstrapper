@@ -73,6 +73,21 @@ func TestCopyFolderWithTechnologyFiltering(t *testing.T) {
 		assertFileExists(t, fs, filepath.Join(targetDir, "fileB1.txt"))
 		assertFileNotExists(t, fs, filepath.Join(targetDir, "fileC1.txt"))
 	})
+	t.Run("copy with multiple technology filter with whitespace", func(t *testing.T) {
+		t.Cleanup(func() {
+			_ = fs.RemoveAll(targetDir)
+			_ = fs.MkdirAll(targetDir, 0755)
+		})
+
+		technology := "java, python"
+		err := CopyByTechnology(testLog, fs, sourceDir, targetDir, technology)
+		require.NoError(t, err)
+
+		assertFileExists(t, fs, filepath.Join(targetDir, "fileA1.txt"))
+		assertFileExists(t, fs, filepath.Join(targetDir, "fileA2.txt"))
+		assertFileExists(t, fs, filepath.Join(targetDir, "fileB1.txt"))
+		assertFileNotExists(t, fs, filepath.Join(targetDir, "fileC1.txt"))
+	})
 	t.Run("copy with invalid technology filter", func(t *testing.T) {
 		t.Cleanup(func() {
 			_ = fs.RemoveAll(targetDir)
@@ -185,6 +200,15 @@ func TestFilterFilesByTechnology(t *testing.T) {
 	})
 	t.Run("filter multiple technologies", func(t *testing.T) {
 		paths, err := filterFilesByTechnology(testLog, fs, sourceDir, []string{"java", "python"})
+		require.NoError(t, err)
+		assert.ElementsMatch(t, []string{
+			filepath.Join("fileA1.txt"),
+			filepath.Join("fileA2.txt"),
+			filepath.Join("fileB1.txt"),
+		}, paths)
+	})
+	t.Run("filter multiple technologies with white spaces", func(t *testing.T) {
+		paths, err := filterFilesByTechnology(testLog, fs, sourceDir, []string{"java ", " python "})
 		require.NoError(t, err)
 		assert.ElementsMatch(t, []string{
 			filepath.Join("fileA1.txt"),
