@@ -37,7 +37,6 @@ func Configure(log logr.Logger, fs afero.Afero, inputDir, configDir string) erro
 		if err != nil {
 			return err
 		}
-
 	}
 
 	if trustedCerts != "" {
@@ -48,7 +47,6 @@ func Configure(log logr.Logger, fs afero.Afero, inputDir, configDir string) erro
 		if err != nil {
 			return err
 		}
-
 	}
 
 	return nil

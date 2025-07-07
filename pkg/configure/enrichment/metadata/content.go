@@ -35,7 +35,7 @@ func (c fileContent) toMap() (map[string]string, error) {
 	return baseMap, nil
 }
 
-func (c fileContent) toJson() ([]byte, error) {
+func (c fileContent) toJSON() ([]byte, error) {
 	rawMap, err := c.toMap() // needed to make the pod.Attributes.UserDefined visible
 	if err != nil {
 		return nil, err

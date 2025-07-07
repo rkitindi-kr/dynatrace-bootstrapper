@@ -11,10 +11,9 @@ import (
 )
 
 const (
-	optionsFormatString = `initialConnectRetryMs %s
-`
-	ConfigPath    = "oneagent/agent/customkeys/curl_options.conf"
-	InputFileName = "initial-connect-retry"
+	optionsFormatString = `initialConnectRetryMs %s\n`
+	ConfigPath          = "oneagent/agent/customkeys/curl_options.conf"
+	InputFileName       = "initial-connect-retry"
 )
 
 func Configure(log logr.Logger, fs afero.Afero, inputDir, configDir string) error {

@@ -66,7 +66,7 @@ func AddFlags(cmd *cobra.Command) {
 }
 
 func run(fs afero.Fs) func(cmd *cobra.Command, _ []string) error {
-	return func(cmd *cobra.Command, _ []string) error {
+	return func(_ *cobra.Command, _ []string) error {
 		setupLogger()
 
 		if isDebug {
@@ -135,5 +135,6 @@ func setupLogger() {
 	}
 
 	zapLog := zap.New(zapcore.NewCore(zapcore.NewJSONEncoder(config), os.Stdout, logLevel))
+
 	log = zapr.NewLogger(zapLog)
 }

@@ -28,7 +28,7 @@ const (
 var (
 	inputDir    string
 	configDir   string
-	installPath = "/opt/dynatrace/oneagent"
+	installPath string
 	isFullstack bool
 	tenant      string
 
@@ -158,7 +158,6 @@ func EnrichWithMetadata(log logr.Logger, fs afero.Afero) error {
 
 			return err
 		}
-
 	}
 
 	log.Info("finished enrichment", "config-directory", configDir, "input-directory", inputDir)

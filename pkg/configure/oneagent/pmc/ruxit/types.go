@@ -88,7 +88,7 @@ func (pm ProcMap) SetupReadonly(installPath string) ProcMap {
 	for section, entries := range pm {
 		for entry, value := range entries {
 			volume := filepath.VolumeName(value)
-			fmt.Printf("%s", volume)
+			fmt.Printf("%s", volume) //nolint:forbidigo
 
 			if strings.HasPrefix(entry, "libraryPath") {
 				sanitizedEntry := strings.ReplaceAll(value, "../", "")
@@ -107,7 +107,7 @@ func (pm ProcMap) SetupReadonly(installPath string) ProcMap {
 }
 
 func (pm ProcMap) ToString() string {
-	var sections []string
+	sections := make([]string, 0, len(pm))
 	for section := range pm {
 		sections = append(sections, section)
 	}

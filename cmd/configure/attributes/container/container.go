@@ -22,7 +22,7 @@ func (attr Attributes) ToMap() (map[string]string, error) {
 }
 
 func ParseAttributes(rawAttributes []string) ([]Attributes, error) {
-	var attributeList []Attributes
+	var attributeList = make([]Attributes, 0, len(rawAttributes))
 
 	for _, attr := range rawAttributes {
 		parsedAttr, err := parse(attr)
@@ -38,7 +38,7 @@ func ParseAttributes(rawAttributes []string) ([]Attributes, error) {
 
 // ToArgs is a helper func to convert an []container.Attributes to a list of args that can be put into a Pod Template
 func ToArgs(attributes []Attributes) ([]string, error) {
-	var args []string
+	var args = make([]string, 0, len(attributes))
 
 	for _, attr := range attributes {
 		jsonAttr, err := json.Marshal(attr)

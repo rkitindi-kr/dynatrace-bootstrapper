@@ -42,7 +42,7 @@ func Configure(log logr.Logger, fs afero.Afero, inputDir, targetDir, configDir, 
 
 	defer func() { _ = inputFile.Close() }()
 
-	conf, err := ruxit.FromJson(inputFile)
+	conf, err := ruxit.FromJSON(inputFile)
 	if err != nil {
 		log.Info("failed to unmarshal the input file", "path", inputFilePath)
 

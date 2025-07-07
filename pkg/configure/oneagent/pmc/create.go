@@ -39,6 +39,7 @@ func Create(log logr.Logger, fs afero.Fs, srcPath, dstPath string, conf ruxit.Pr
 	err = fs.MkdirAll(filepath.Dir(dstPath), os.ModePerm)
 	if err != nil {
 		log.Info("failed to create destination dir", "path", filepath.Dir(filepath.Dir(dstPath)))
+
 		return err
 	}
 
@@ -51,7 +52,7 @@ func Create(log logr.Logger, fs afero.Fs, srcPath, dstPath string, conf ruxit.Pr
 
 	defer func() { _ = dstFile.Close() }()
 
-	_, err = dstFile.Write([]byte(mergedConf.ToString()))
+	_, err = dstFile.WriteString(mergedConf.ToString())
 	if err != nil {
 		log.Info("failed to write merged config into destination file", "path", dstPath)
 

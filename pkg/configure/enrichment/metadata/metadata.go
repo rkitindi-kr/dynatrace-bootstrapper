@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	JsonFilePath       = "enrichment/dt_metadata.json"
+	JSONFilePath       = "enrichment/dt_metadata.json"
 	PropertiesFilePath = "enrichment/dt_metadata.properties"
 )
 
@@ -20,14 +20,14 @@ func Configure(log logr.Logger, fs afero.Afero, configDirectory string, podAttr 
 
 	log.V(1).Info("format content into a raw form", "struct", confContent)
 
-	confJson, err := confContent.toJson()
+	confJSON, err := confContent.toJSON()
 	if err != nil {
 		return err
 	}
 
-	jsonFilePath := filepath.Join(configDirectory, JsonFilePath)
+	jsonFilePath := filepath.Join(configDirectory, JSONFilePath)
 
-	err = fsutils.CreateFile(fs, jsonFilePath, string(confJson))
+	err = fsutils.CreateFile(fs, jsonFilePath, string(confJSON))
 	if err != nil {
 		log.Error(err, "failed to create metadata-enrichment properties file", "struct", jsonFilePath)
 

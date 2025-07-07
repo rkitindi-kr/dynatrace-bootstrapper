@@ -10,6 +10,8 @@ import (
 
 const (
 	Flag = "attribute"
+
+	expectedKeyValueParts = 2
 )
 
 type Attributes struct {
@@ -23,7 +25,7 @@ func (attr Attributes) ToMap() (map[string]string, error) {
 	return structs.ToMap(attr)
 }
 
-type PodInfo struct {
+type PodInfo struct { //nolint:revive
 	PodName       string `json:"k8s.pod.name,omitempty"`
 	PodUID        string `json:"k8s.pod.uid,omitempty"`
 	NodeName      string `json:"k8s.node.name,omitempty"`
@@ -42,11 +44,11 @@ type ClusterInfo struct {
 }
 
 func ParseAttributes(rawAttributes []string) (Attributes, error) {
-	rawMap := make(map[string]string)
+	rawMap := make(map[string]string, len(rawAttributes))
 
 	for _, attr := range rawAttributes {
 		parts := strings.Split(attr, "=")
-		if len(parts) == 2 {
+		if len(parts) == expectedKeyValueParts {
 			rawMap[parts[0]] = parts[1]
 		}
 	}
@@ -88,12 +90,12 @@ func filterOutUserDefined(rawInput map[string]string, parsedInput Attributes) er
 
 // ToArgs is a helper func to convert an pod.Attributes to a list of args that can be put into a Pod Template
 func ToArgs(attributes Attributes) ([]string, error) {
-	var args []string
-
 	attrMap, err := attributes.ToMap()
 	if err != nil {
 		return nil, err
 	}
+
+	args := make([]string, 0, len(attrMap))
 
 	for key, value := range attrMap {
 		if value == "" {
