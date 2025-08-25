@@ -4,7 +4,6 @@ go 1.23.4
 
 require (
 	github.com/go-logr/logr v1.4.3
-	github.com/rkitindi-kr/dynatrace-bootstrapper v1.1.1
 	github.com/go-logr/zapr v1.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/afero v1.14.0
@@ -23,5 +22,3 @@ require (
 	golang.org/x/text v0.23.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/rkitindi-kr/dynatrace-bootstrapper => github.com/rkitindi-kr/dynatrace-bootstrapper main
