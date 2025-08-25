@@ -4,6 +4,7 @@ go 1.23.4
 
 require (
 	github.com/go-logr/logr v1.4.3
+	github.com/rkitindi-kr/dynatrace-bootstrapper v1.1.1
 	github.com/go-logr/zapr v1.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/afero v1.14.0
@@ -11,7 +12,6 @@ require (
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/sys v0.35.0
-        github.com/rkitindi-kr/dynatrace-bootstrapper v1.1.1
 )
 
 require (
