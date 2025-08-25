@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Dynatrace/dynatrace-bootstrapper/pkg/utils/structs"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/pkg/utils/structs"
 	"github.com/pkg/errors"
 )
 

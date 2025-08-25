@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	bootstrapper "github.com/Dynatrace/dynatrace-bootstrapper/cmd"
+	bootstrapper "github.com/rkitindi-kr/dynatrace-bootstrapper/cmd"
 	"github.com/spf13/afero"
 )
 

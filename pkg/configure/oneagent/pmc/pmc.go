@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Dynatrace/dynatrace-bootstrapper/pkg/configure/oneagent/pmc/ruxit"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/pkg/configure/oneagent/pmc/ruxit"
 	"github.com/go-logr/logr"
 	"github.com/spf13/afero"
 )

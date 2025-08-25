@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	fsutils "github.com/Dynatrace/dynatrace-bootstrapper/pkg/utils/fs"
+	fsutils "github.com/rkitindi-kr/dynatrace-bootstrapper/pkg/utils/fs"
 	"github.com/go-logr/zapr"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"path/filepath"
 
-	"github.com/Dynatrace/dynatrace-bootstrapper/cmd/configure/attributes/container"
-	"github.com/Dynatrace/dynatrace-bootstrapper/cmd/configure/attributes/pod"
-	fsutils "github.com/Dynatrace/dynatrace-bootstrapper/pkg/utils/fs"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/cmd/configure/attributes/container"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/cmd/configure/attributes/pod"
+	fsutils "github.com/rkitindi-kr/dynatrace-bootstrapper/pkg/utils/fs"
 	"github.com/go-logr/logr"
 	"github.com/spf13/afero"
 )

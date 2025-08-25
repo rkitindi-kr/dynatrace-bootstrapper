@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Dynatrace/dynatrace-bootstrapper/pkg/utils/structs"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/pkg/utils/structs"
 )
 
 const (

@@ -1,7 +1,7 @@
 package move
 
 import (
-	impl "github.com/Dynatrace/dynatrace-bootstrapper/pkg/move"
+	impl "github.com/rkitindi-kr/dynatrace-bootstrapper/pkg/move"
 	"github.com/go-logr/logr"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"

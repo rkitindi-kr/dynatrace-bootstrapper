@@ -1,6 +1,6 @@
 # dynatrace-bootstrapper
 
-The `dynatrace-bootstrapper` is a small CLI binary built into a [Dynatrace CodeModule](https://gallery.ecr.aws/dynatrace/dynatrace-codemodules) (after version `<to-be-determined-codemodule-version>`) so that it can be used in conjunction with the [dynatrace-operator](https://github.com/Dynatrace/dynatrace-operator) to optimize the download and configuration of a CodeModule in Kubernetes.
+The `dynatrace-bootstrapper` is a small CLI binary built into a [Dynatrace CodeModule](https://gallery.ecr.aws/dynatrace/dynatrace-codemodules) (after version `<to-be-determined-codemodule-version>`) so that it can be used in conjunction with the [dynatrace-operator](https://github.com/rkitindi-kr/dynatrace-operator) to optimize the download and configuration of a CodeModule in Kubernetes.
 
 ## Responsibilities
 
@@ -167,8 +167,8 @@ You can use the `make deploy/custom`
 
 The bootstrapper is mainly used by installing it via `go install`, so the release is very simple:
 
-1. Go to the [release page](https://github.com/Dynatrace/dynatrace-bootstrapper/releases).
-2. Press [Draft new release](https://github.com/Dynatrace/dynatrace-bootstrapper/releases/new)
+1. Go to the [release page](https://github.com/rkitindi-kr/dynatrace-bootstrapper/releases).
+2. Press [Draft new release](https://github.com/rkitindi-kr/dynatrace-bootstrapper/releases/new)
 3. Set the tag you want to release, you don't need to push the tag beforehand. Example format: v1.2.3
 4. Press `Generate release notes`
 5. Cleanup generated output to only have the interesting commits. (business logic relevant or bugfixes)

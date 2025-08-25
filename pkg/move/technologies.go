@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	fsutils "github.com/Dynatrace/dynatrace-bootstrapper/pkg/utils/fs"
+	fsutils "github.com/rkitindi-kr/dynatrace-bootstrapper/pkg/utils/fs"
 	"github.com/go-logr/logr"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"

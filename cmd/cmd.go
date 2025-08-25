@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Dynatrace/dynatrace-bootstrapper/cmd/configure"
-	"github.com/Dynatrace/dynatrace-bootstrapper/cmd/move"
-	"github.com/Dynatrace/dynatrace-bootstrapper/pkg/version"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/cmd/configure"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/cmd/move"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/pkg/version"
 	"github.com/go-logr/logr"
 	"github.com/go-logr/zapr"
 	"github.com/spf13/afero"

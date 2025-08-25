@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/Dynatrace/dynatrace-bootstrapper/pkg/move"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/pkg/move"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 )

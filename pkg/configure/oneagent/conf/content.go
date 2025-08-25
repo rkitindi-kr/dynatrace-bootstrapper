@@ -3,9 +3,9 @@ package conf
 import (
 	"strings"
 
-	"github.com/Dynatrace/dynatrace-bootstrapper/cmd/configure/attributes/container"
-	"github.com/Dynatrace/dynatrace-bootstrapper/cmd/configure/attributes/pod"
-	"github.com/Dynatrace/dynatrace-bootstrapper/pkg/utils/structs"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/cmd/configure/attributes/container"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/cmd/configure/attributes/pod"
+	"github.com/rkitindi-kr/dynatrace-bootstrapper/pkg/utils/structs"
 )
 
 type fileContent struct {
